@@ -24,7 +24,7 @@
 const char *app_profile = "./t1conf/main.conf";
 g_ntc_app_plug_t g_ntc_app_plug;
 
-int NTC_APP_PLUG_VERSION_20181209=20190113;
+int NTC_APP_PLUG_VERSION_20190115=20190115;
 
 const char *ntc_statis_column[NTC_STATIS_COLUMN_NUM] = {"C2S_PKTS", "C2S_BYTES", "S2C_PKTS", "S2C_BYTES", "LINKS"};
 
@@ -207,10 +207,14 @@ void destroy_app_context(comm_context_t *context, int thread_seq)
 
 int ntc_get_dpkt_label(const struct streaminfo *a_stream, int trans_proto, char *label_buf, int *label_buflen, unsigned int *is_feedback)
 {
+	int ip = 0;
 	dpkt_lable_t dpkt_info_null;
 	dpkt_lable_t *dpkt_info = NULL;
+	struct vxlan_info vinfo;
+	int opt_val_len = sizeof(vinfo);
+
 	dpkt_info = (dpkt_lable_t*)project_req_get_struct(a_stream,g_ntc_app_plug.dpkt_cons_label_id);	
-	int ip = 0;
+	
 	if(dpkt_info == NULL)	
 	{		
 		memset(&dpkt_info_null, 0, sizeof(dpkt_info_null));
@@ -230,7 +234,11 @@ int ntc_get_dpkt_label(const struct streaminfo *a_stream, int trans_proto, char 
 	{
 		(dpkt_info->v6)?ip=6:ip=4;	
 	}
-	snprintf(label_buf, *label_buflen, "IP=%d;TRANS=%d;PROTO_ID=%u;APP_ID=%u;OS_ID=%u;BS_ID=%u;WEB_ID=%u;BEHAV_ID=%u;",
+
+	memset(&vinfo, 0, opt_val_len);
+	MESA_get_stream_opt(a_stream, MSO_STREAM_VXLAN_INFO, &vinfo, &opt_val_len);
+	
+	snprintf(label_buf, *label_buflen, "IP=%d;TRANS=%d;PROTO_ID=%u;APP_ID=%u;OS_ID=%u;BS_ID=%u;WEB_ID=%u;BEHAV_ID=%u;DIR=%u;",
 	//	dpkt_info->v6,
 		ip,
 		dpkt_info->trans_proto,
@@ -240,7 +248,8 @@ int ntc_get_dpkt_label(const struct streaminfo *a_stream, int trans_proto, char 
 		dpkt_info->dpkt_op_type,	        			
 		dpkt_info->dpkt_browser_type,	        			
 		dpkt_info->dpkt_web_type,	        			
-		dpkt_info->dpkt_behavior_type);
+		dpkt_info->dpkt_behavior_type,
+		vinfo.link_dir);
 
 	*label_buflen = strlen(label_buf);	
 	*is_feedback = dpkt_info->dpkt_behavior_type;
