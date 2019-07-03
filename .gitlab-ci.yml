@@ -22,7 +22,7 @@ stages:
 
 .ntc_app_plug:
   extends: .build_before_script
-  image: git.mesalab.cn:7443/mesa_framework/framework:master
+  image: git.mesalab.cn:7443/ntc/soq_master:collect
   script:
     - source /etc/profile.d/MESA.sh
     - mkdir -p build
@@ -68,7 +68,7 @@ ntc_app_plug:
 
 release:
   stage: release
-  image: git.mesalab.cn:7443/mesa_framework/framework:master
+  image: git.mesalab.cn:7443/ntc/soq_master:collect
   tags:
     - share
   only:
