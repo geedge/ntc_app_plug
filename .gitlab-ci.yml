@@ -24,7 +24,6 @@ stages:
   extends: .build_before_script
   image: git.mesalab.cn:7443/mesa_framework/framework:master
   script:
-    - cp src/bgp.h /opt/MESA/include/MESA/
     - source /etc/profile.d/MESA.sh
     - mkdir -p build
     - cd build
