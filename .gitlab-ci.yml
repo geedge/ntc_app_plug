@@ -20,7 +20,7 @@ stages:
     - ln -s $CI_PROJECT_DIR /tmp/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/$CI_PROJECT_PATH
     - cd /tmp/padding_for_CPACK_RPM_BUILD_SOURCE_DIRS_PREFIX/$CI_PROJECT_PATH
 
-.bgp:
+.ntc_app_plug:
   extends: .build_before_script
   image: git.mesalab.cn:7443/mesa_framework/framework:master
   script:
@@ -33,7 +33,7 @@ stages:
 
 build:
   stage: build
-  extends:   .bgp
+  extends:   .ntc_app_plug
   tags:
     - share
   variables:
@@ -52,9 +52,9 @@ build:
 #  only:
 #    - tags
 
-bgp:
+ntc_app_plug:
     stage: package
-    extends: .bgp
+    extends: .ntc_app_plug
     tags:
       - share
     variables:
@@ -74,8 +74,8 @@ release:
   only:
     - tags
   variables:
-    ARTIFACTS_JOB: "bgp"
-    PROJECT_NAME: "bgp"
+    ARTIFACTS_JOB: "ntc_app_plug"
+    PROJECT_NAME: "ntc_app_plug"
     USER_DEFINE: "release"
   script:
     - /bin/bash -x ./autorelease.sh $CI_API_V4_URL $CI_PROJECT_URL $CI_PROJECT_ID $CI_TOKEN $CI_COMMIT_TAG $ARTIFACTS_JOB $CI_PROJECT_NAME $USER_DEFINE
