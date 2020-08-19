@@ -624,6 +624,7 @@ int NTC_APP_PLUG_INIT()
 	int max_thread_num = get_thread_count();
 	g_ntc_app_plug.lhash_handle = (MESA_htable_handle *)calloc(max_thread_num, sizeof(MESA_htable_handle));
 
+	memset(&args, 0, sizeof(args));
 	args.thread_safe = 0;
 	args.recursive = 0;
 	args.hash_slot_size = 8192;
